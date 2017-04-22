@@ -4,17 +4,17 @@ from skimage.feature import hog
 
 
 # Define a function to compute binned color features
-# def bin_spatial(img, size=(32, 32)):
-#     # Use cv2.resize().ravel() to create the feature vector
-#     features = cv2.resize(img, size).ravel()
-#     # Return the feature vector
-#     return features
-
 def bin_spatial(img, size=(32, 32)):
-    color1 = cv2.resize(img[:,:,0], size).ravel()
-    color2 = cv2.resize(img[:,:,1], size).ravel()
-    color3 = cv2.resize(img[:,:,2], size).ravel()
-    return np.hstack((color1, color2, color3))
+    # Use cv2.resize().ravel() to create the feature vector
+    features = cv2.resize(img, size).ravel()
+    # Return the feature vector
+    return features
+
+# def bin_spatial(img, size=(32, 32)):
+#     color1 = cv2.resize(img[:,:,0], size).ravel()
+#     color2 = cv2.resize(img[:,:,1], size).ravel()
+#     color3 = cv2.resize(img[:,:,2], size).ravel()
+#     return np.hstack((color1, color2, color3))
 
 
 # Define a function to compute color histogram features

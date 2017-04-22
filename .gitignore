@@ -1,3 +1,6 @@
 .DS_Store
 .idea/
 *.pyc
+.ipynb_checkpoints/
+downloads/
+test_data/
