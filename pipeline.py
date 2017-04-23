@@ -161,10 +161,6 @@ def process_image(image):
                         spatial_size,
                         hist_bins)
 
-    # bbpFileObj = open('bbox_pickle.p', 'wb')
-    # pickle.dump(bounding_boxes, bbpFileObj)
-    # bbpFileObj.close()
-
     # Bring on the heat
     heat = np.zeros_like(image[:, :, 0]).astype(np.float)
 
