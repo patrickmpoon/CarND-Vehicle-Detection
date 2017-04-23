@@ -8,6 +8,21 @@ from scipy.ndimage.measurements import label
 from utilities import bin_spatial, color_hist, convert_color, draw_boxes, get_hog_features
 
 
+MAX_LOOK_BACK = 20
+
+class Cars:
+
+    def __init__(self):
+        self.bounding_boxes = []
+
+    def add_cars(self, boxes):
+        self.bounding_boxes.append(boxes)
+
+        if (len(self.bounding_boxes) > MAX_LOOK_BACK):
+            self.bounding_boxes = self.bounding_boxes[len(self.bounding_boxes) - MAX_LOOK_BACK : ]
+
+
+
 # Define a single function that can extract features using hog sub-sampling and make predictions
 def find_cars(img,
               ystart,
@@ -40,7 +55,7 @@ def find_cars(img,
     nxblocks = (ch1.shape[1] // pix_per_cell) - 1
     nyblocks = (ch1.shape[0] // pix_per_cell) - 1
     nfeat_per_block = orient * cell_per_block ** 2
-    # 64 was the orginal sampling rate, with 8 cells and 8 pix per cell
+    # 64 was the original sampling rate, with 8 cells and 8 pix per cell
     window = 64
     nblocks_per_window = (window // pix_per_cell) - 1
     cells_per_step = 2  # Instead of overlap, define how many cells to step
@@ -143,32 +158,45 @@ def get_classifier():
 
 
 def process_image(image):
+    global cars
+
     cell_per_block, hist_bins, orient, pix_per_cell, spatial_size, svc, X_scaler = get_classifier()
 
-    ystart = 400
-    ystop = 656
-    scale = 1.5
+    bounding_boxes = []
 
-    bounding_boxes = find_cars(image,
-                        ystart,
-                        ystop,
-                        scale,
-                        svc,
-                        X_scaler,
-                        orient,
-                        pix_per_cell,
-                        cell_per_block,
-                        spatial_size,
-                        hist_bins)
+    # (ystart, ystop, scale)
+    window_searches = [
+        (400, 528, 1.0),
+        (400, 656, 1.5),
+        (464, 656, 1.75)
+    ]
+
+    for ystart, ystop, scale in window_searches:
+        bounding_boxes.extend(find_cars(image,
+                                        ystart,
+                                        ystop,
+                                        scale,
+                                        svc,
+                                        X_scaler,
+                                        orient,
+                                        pix_per_cell,
+                                        cell_per_block,
+                                        spatial_size,
+                                        hist_bins))
+
+    if (len(bounding_boxes)):
+        cars.add_cars(bounding_boxes)
 
     # Bring on the heat
     heat = np.zeros_like(image[:, :, 0]).astype(np.float)
 
     # Add heat to each box in box list
-    heat = add_heat(heat, bounding_boxes)
+    for bounding_box in cars.bounding_boxes:
+        heat = add_heat(heat, bounding_box)
+
 
     # Apply threshold to help remove false positives
-    heat = apply_threshold(heat, 1)
+    heat = apply_threshold(heat, 8)
 
     # Visualize the heatmap when displaying
     heatmap = np.clip(heat, 0, 255)
@@ -181,6 +209,8 @@ def process_image(image):
 
 
 if __name__ == "__main__":
+    cars = Cars()
+
     video_output = 'final_output.mp4'
     clip1 = VideoFileClip("project_video.mp4")
     output_video = clip1.fl_image(process_image) #NOTE: this function expects color images!!
