@@ -1,6 +1,13 @@
 import cv2
 import numpy as np
 from skimage.feature import hog
+from glob import glob
+
+
+def get_training_data():
+    cars = glob('./training_data/vehicles/*/*.png')
+    notcars = glob('./training_data/non-vehicles/*/*.png')
+    return cars, notcars
 
 
 # Define a function to compute binned color features
@@ -52,34 +59,3 @@ def draw_boxes(img, bboxes, color=(0, 0, 255), thick=6):
     # draw each bounding box on your image copy using cv2.rectangle()
     # return the image copy with boxes drawn
     return draw_img # Change this line to return image copy with boxes
-
-
-# Define a function to return HOG features and visualization
-def get_hog_features(img,
-                     orient,
-                     pix_per_cell,
-                     cell_per_block,
-                     vis=False,
-                     feature_vec=True):
-    # Call with two outputs if vis==True
-    if vis == True:
-        features, hog_image = hog(img,
-                                  orientations=orient,
-                                  pixels_per_cell=(pix_per_cell, pix_per_cell),
-                                  cells_per_block=(cell_per_block, cell_per_block),
-                                  transform_sqrt=True,
-                                  visualise=vis,
-                                  feature_vector=feature_vec)
-        return features, hog_image
-
-    # Otherwise call with one output
-    else:
-        features = hog(img,
-                       orientations=orient,
-                       pixels_per_cell=(pix_per_cell, pix_per_cell),
-                       cells_per_block=(cell_per_block, cell_per_block),
-                       transform_sqrt=True,
-                       visualise=vis,
-                       feature_vector=feature_vec)
-        return features
-

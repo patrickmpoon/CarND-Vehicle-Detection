@@ -3,9 +3,10 @@ import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import numpy as np
 import pickle
+from classifier import get_hog_features
 from moviepy.editor import VideoFileClip
 from scipy.ndimage.measurements import label
-from utilities import bin_spatial, color_hist, convert_color, draw_boxes, get_hog_features
+from utilities import bin_spatial, color_hist, convert_color
 
 
 MAX_LOOK_BACK = 20
@@ -194,7 +195,6 @@ def process_image(image):
     for bounding_box in cars.bounding_boxes:
         heat = add_heat(heat, bounding_box)
 
-
     # Apply threshold to help remove false positives
     heat = apply_threshold(heat, 8)
 
@@ -210,7 +210,6 @@ def process_image(image):
 
 if __name__ == "__main__":
     cars = Cars()
-
     video_output = 'final_output.mp4'
     clip1 = VideoFileClip("project_video.mp4")
     output_video = clip1.fl_image(process_image) #NOTE: this function expects color images!!
