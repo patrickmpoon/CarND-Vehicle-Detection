@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pickle
 import time
+from random import shuffle
 from sklearn.svm import LinearSVC
 from sklearn.preprocessing import StandardScaler
 from skimage.feature import hog
@@ -297,16 +298,17 @@ def search_windows(img,
 
 if __name__ == "__main__":
     cars, notcars = get_training_data()
+    shuffle(cars)
+    shuffle(notcars)
 
-    if TESTING:
-        sample_size = 500
-        cars = cars[0:sample_size]
-        notcars = notcars[0:sample_size]
+    sample_size = 1500
+    cars = cars[0:sample_size]
+    notcars = notcars[0:sample_size]
 
     ### TODO: Tweak these parameters and see how the results change.
-    color_space = 'YCrCb'  # Can be RGB, HSV, LUV, HLS, YUV, YCrCb
+    color_space = 'HSV'  # Can be RGB, HSV, LUV, HLS, YUV, YCrCb
     orient = 9  # HOG orientations
-    pix_per_cell = 8  # HOG pixels per cell
+    pix_per_cell = 6  # HOG pixels per cell
     cell_per_block = 2  # HOG cells per block
     hog_channel = "ALL"  # Can be 0, 1, 2, or "ALL"
     spatial_size = (16, 16)  # Spatial binning dimensions

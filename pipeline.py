@@ -1,6 +1,4 @@
 import cv2
-import matplotlib.image as mpimg
-import matplotlib.pyplot as plt
 import numpy as np
 import pickle
 from classifier import get_hog_features
@@ -8,8 +6,8 @@ from moviepy.editor import VideoFileClip
 from scipy.ndimage.measurements import label
 from utilities import bin_spatial, color_hist, convert_color
 
-
 MAX_LOOK_BACK = 20
+
 
 class Cars:
 
@@ -196,7 +194,7 @@ def process_image(image):
         heat = add_heat(heat, bounding_box)
 
     # Apply threshold to help remove false positives
-    heat = apply_threshold(heat, 8)
+    heat = apply_threshold(heat, 14)
 
     # Visualize the heatmap when displaying
     heatmap = np.clip(heat, 0, 255)
