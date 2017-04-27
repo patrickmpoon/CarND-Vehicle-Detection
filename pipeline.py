@@ -126,6 +126,21 @@ def apply_threshold(heatmap, threshold):
     return heatmap
 
 
+def draw_heatmap_img(image, box_list):
+    heat = np.zeros_like(image[:, :, 0]).astype(np.float)
+
+    # Add heat to each box in box list
+    heat = add_heat(heat, box_list)
+
+    # Apply threshold to help remove false positives
+    heat = apply_threshold(heat, 1)
+
+    # Visualize the heatmap when displaying
+    heatmap = np.clip(heat, 0, 255)
+
+    return heatmap
+
+
 def draw_labeled_bboxes(img, labels):
     # Iterate through all detected cars
     for car_number in range(1, labels[1]+1):
